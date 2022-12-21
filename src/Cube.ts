@@ -1,4 +1,25 @@
-import { BoxGeometry, Mesh, MeshBasicMaterial, PerspectiveCamera, Scene, WebGLRenderer } from 'three'
+import {
+	BoxGeometry,
+	ColorRepresentation,
+	Mesh,
+	MeshBasicMaterial,
+	PerspectiveCamera,
+	Scene,
+	WebGLRenderer
+} from 'three'
+import WebGL from './modules/WebGL'
+
+export class Cube {
+	geometry: BoxGeometry
+	material: MeshBasicMaterial
+	mesh: Mesh
+
+	constructor({ width, height, depth, color } : { width: number, height: number, depth: number, color: ColorRepresentation }) {
+		this.geometry = new BoxGeometry(width, height, depth)
+		this.material = new MeshBasicMaterial({ color })
+		this.mesh = new Mesh(this.geometry, this.material)
+	}
+}
 
 function setUpScene() {
 	return new Scene()
@@ -17,24 +38,28 @@ function setUpRenderer(container: HTMLElement | null) {
 	return renderer
 }
 
-function createCube() {
-	const geometry = new BoxGeometry(1, 1, 1)
-	const material = new MeshBasicMaterial({color: 0x00ff00})
-	return new Mesh(geometry, material)
-}
-
-export function setup() {
+export function renderCube() {
 	const renderer = setUpRenderer(document.getElementById('app'))
 	const camera = setUpCamera()
-	const cube = createCube()
-	const scene = setUpScene().add(cube)
+	const cube = new Cube({ width: 1, height: 1, depth: 1, color: 0x00ff00 })
+	const scene = setUpScene().add(cube.mesh)
 
 	function animate() {
 		requestAnimationFrame(animate)
-		cube.rotation.x += 0.01
-		cube.rotation.y += 0.01
+		cube.mesh.rotation.x += 0.01
+		cube.mesh.rotation.y += 0.01
 		renderer.render(scene, camera)
 	}
 
-	animate()
+	if ( WebGL.isWebGLAvailable() ) {
+
+		// Initiate function or other initializations here
+		animate()
+
+	} else {
+
+		const warning = WebGL.getWebGLErrorMessage();
+		document.getElementById( 'app' )?.appendChild( warning );
+
+	}
 }

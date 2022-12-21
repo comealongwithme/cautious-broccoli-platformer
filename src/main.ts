@@ -1,5 +1,8 @@
 import './style.css'
 
-import { setup } from './Cube'
+// import { renderCube } from './Cube'
+// renderCube()
 
-setup()
+// import { createLine } from './Line'
+// createLine()
+
